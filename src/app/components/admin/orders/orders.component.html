@@ -1,59 +1,92 @@
 <div id="update_button">
-  <div id="side_buttons">
-    <button mat-button mat-raised-button color="primary"(click)="updateYear()">YY</button>
-    <button mat-button mat-raised-button color="primary"(click)="updateYearMonth()">YY/MM</button>
-    <button mat-button mat-raised-button color="primary"(click)="updateYearMonthDay()">YY/MM/DD</button>
-  </div>
-  <div id="main_button">
-    <button mat-button mat-raised-button color="primary"(click)="showUpdateOptions()">Odśwież</button>
-  </div>
+    <div
+        id="side_buttons"
+        [ngStyle]="{ display: this.hidden ? 'none' : 'flex' }"
+    >
+        <button
+            mat-button
+            mat-raised-button
+            color="primary"
+            (click)="updateYear()"
+        >
+            YY
+        </button>
+        <button
+            mat-button
+            mat-raised-button
+            color="primary"
+            (click)="updateYearMonth()"
+        >
+            YY/MM
+        </button>
+        <button
+            mat-button
+            mat-raised-button
+            color="primary"
+            (click)="updateYearMonthDay()"
+        >
+            YY/MM/DD
+        </button>
+    </div>
+    <div id="main_button">
+        <button
+            mat-button
+            mat-raised-button
+            color="primary"
+            (click)="showUpdateOptions()"
+        >
+            Odśwież
+        </button>
+    </div>
 </div>
 <div class="wrapper">
-  <app-menu></app-menu>
-  <div class="content-right">
-    <div class="content">
-      <div class="content-header">
-        <h2>ORDERS</h2>
-      </div>
-      <div class="content-draw">
-          <canvas baseChart
-          [datasets]="barChartData"
-          [labels]="barChartLabels"
-          [options]="barChartOptions"
-          [plugins]="barChartPlugins"
-          [legend]="barChartLegend"
-          [chartType]="barChartType">
-          </canvas>
-      </div>
+    <app-menu></app-menu>
+    <div class="content-right">
+        <div class="content">
+            <div class="content-header">
+                <h2>ORDERS</h2>
+            </div>
+            <div class="content-draw">
+                <canvas
+                    baseChart
+                    [datasets]="barChartData"
+                    [labels]="barChartLabels"
+                    [options]="barChartOptions"
+                    [plugins]="barChartPlugins"
+                    [legend]="barChartLegend"
+                    [chartType]="barChartType"
+                >
+                </canvas>
+            </div>
+        </div>
+        <div class="content">
+            <div class="content-header">
+                <h2>Odnotowane</h2>
+            </div>
+            <div class="content-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Imię</th>
+                            <th>Nazwisko</th>
+                            <th>Email</th>
+                            <th>Telefon</th>
+                            <th>Cena</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let order of (this.$Orders | async)">
+                            <td>{{ order.id }}</td>
+                            <td>{{ order.firstName }}</td>
+                            <td>{{ order.lastName }}</td>
+                            <td>{{ order.email }}</td>
+                            <td>{{ order.phone }}</td>
+                            <td>{{ this.orderPrice(order) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-    <div class="content">
-      <div class="content-header">
-        <h2>Odnotowane</h2>
-      </div>
-      <div class="content-container">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Imię</th>
-              <th>Nazwisko</th>
-              <th>Email</th>
-              <th>Telefon</th>
-              <th>Cena</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let order of this.mainService.orders?.orders">
-              <td>{{order.id}}</td>
-              <td>{{order.first_name}}</td>
-              <td>{{order.last_name}}</td>
-              <td>{{order.email}}</td>
-              <td>{{order.phone}}</td>
-              <td>{{order.price}}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
 </div>

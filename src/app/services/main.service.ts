@@ -1,124 +1,66 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy, OnInit } from '@angular/core';
+import { IProduct } from '../interfaces/IProduct';
+import { IProductData } from '../interfaces/IProductData';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
-export class MainService {
+export class MainService implements OnDestroy {
+    private url = 'http://localhost:3000/products';
+    private headerOptions = {
+        headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+    };
+    private $productsBehavior!: BehaviorSubject<IProduct[]>;
+    private subscriptions!: Subscription;
 
-  constructor() { }
+    constructor(private httpClient: HttpClient) {
+        this.$productsBehavior = new BehaviorSubject<IProduct[]>([]);
+        this.subscriptions = new Subscription();
+        this.init();
+    }
 
-  @Injectable({
-    providedIn: 'root'
-  })
-  productsRequest = { // obiekt z kryteriami, na podstawie których będziemy szukać produktów
-    action: 'getProducts',
-    name: '',
-    category: ''
-  };
+    private init(): void {
+        this.fetchProducts();
+    }
 
-  products: any; // Tutaj wyląduje obiekt z produktami - odpowiedź API i bazy danych na naszą prośbę
-  apiPath = 'http://jakubadamus.cba.pl/xhr.php?'; // Ścieżka do naszego api
+    ngOnDestroy(): void {
+        this.subscriptions.unsubscribe();
+    }
 
-  cart: any[] = [];
+    fetchProducts(query?: string): void {
+        this.subscriptions.add(
+            this.httpClient
+                .get<IProduct[]>(
+                    `${this.url}${query ? `?title_like=${query}` : ''}`,
+                    this.headerOptions
+                )
+                .subscribe((products) => this.$productsBehavior.next(products))
+        );
+    }
 
-  // tslint:disable-next-line: typedef
-  getProducts(productsRequest?: {action: string; name: string; category: string; } ) { //  Pobiera produkty poprzez API
-    const s = new Promise((resolve, reject) => {
-      const xhttp = new XMLHttpRequest();
-      const SQL = ('object=' + encodeURIComponent(JSON.stringify(productsRequest)));
-      console.log(this.apiPath + SQL);
-      xhttp.open('GET', this.apiPath + SQL, true);
-      xhttp.send();
-      // tslint:disable-next-line: typedef
-      xhttp.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) {
-          const resultObject = JSON.parse(xhttp.responseText);
-          if (resultObject !== null) { resolve(resultObject); }
-          else { reject('Failed'); }
-        }
-      };
-    });
-    s.then((onmessage: any) => {
-      this.products = onmessage;
-      console.log(this.products);
-    }).catch((onmessage) => {
-      console.log('Coś poszło nie tak podczas wczytywania produktów!');
-    });
-  }
-  // tslint:disable-next-line: typedef
-  addProduct(newProduct: any) {
-    const s = new Promise((resolve, reject) => {
-      const xhttp = new XMLHttpRequest();
-      const request = { action: 'addProduct', newProduct };
-      const SQL = ('object=' + encodeURIComponent(JSON.stringify(request)));
-      console.log(this.apiPath + SQL);
-      xhttp.open('GET', this.apiPath + SQL, true);
-      xhttp.send();
-      // tslint:disable-next-line: typedef
-      xhttp.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) {
-          const resultObject = JSON.parse(xhttp.responseText);
-          if (resultObject !== null) { resolve(resultObject); }
-          else { reject('Failed'); }
-        }
-      };
-    });
-    s.then((onmessage: any) => {
-      console.log('Pomyślnie dodano nowy produkt!');
-    }).catch((onmessage) => {
-      console.log('Coś poszło nie tak podczas dodawania nowego produktu!');
-    });
-  }
-  // tslint:disable-next-line: typedef
-  removeProduct(id: any) {
-    const s = new Promise((resolve, reject) => {
-      const xhttp = new XMLHttpRequest();
-      const request = { action: 'removeProduct', id };
-      const SQL = ('object=' + encodeURIComponent(JSON.stringify(request)));
-      console.log(this.apiPath + SQL);
-      xhttp.open('GET', this.apiPath + SQL, true);
-      xhttp.send();
-      // tslint:disable-next-line: typedef
-      xhttp.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) {
-          const resultObject = JSON.parse(xhttp.responseText);
-          if (resultObject !== null) { resolve(resultObject); }
-          else { reject('Failed'); }
-        }
-      };
-    });
-    s.then((onmessage: any) => {
-      console.log('Pomyślnie usunięto produkt!');
-    }).catch((onmessage) => {
-      console.log('Coś poszło nie tak podczas usuwania produktu!');
-    });
-  }
-  // tslint:disable-next-line: member-ordering
-  orders: any;
-  // tslint:disable-next-line: typedef
-  getOrders() {
-    const s = new Promise((resolve, reject) => {
-      const xhttp = new XMLHttpRequest();
-      const request = { action: 'getOrders' };
-      const SQL = ('object=' + encodeURIComponent(JSON.stringify(request)));
-      console.log(this.apiPath + SQL);
-      xhttp.open('GET', this.apiPath + SQL, true);
-      xhttp.send();
-      // tslint:disable-next-line: typedef
-      xhttp.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) {
-          const resultObject = JSON.parse(xhttp.responseText);
-          if (resultObject !== null) { resolve(resultObject); }
-          else { reject('Failed'); }
-        }
-      };
-    });
-    s.then((onmessage: any) => {
-      console.log('Pomyślnie pobrano zamówienia!');
-      this.orders = onmessage;
-    }).catch((onmessage) => {
-      console.log('Coś poszło nie tak podczas pobierania zamówień!');
-    });
-    return s;
-  }
+    addProduct(newProduct: IProductData): void {
+        this.subscriptions.add(
+            this.httpClient
+                .post<IProductData>(
+                    `${this.url}`,
+                    newProduct,
+                    this.headerOptions
+                )
+                .subscribe(() => this.fetchProducts())
+        );
+    }
+
+    removeProduct(id: number): void {
+        this.subscriptions.add(
+            this.httpClient
+                .delete<IProduct>(`${this.url}/${id}`, this.headerOptions)
+                .subscribe(() => this.fetchProducts())
+        );
+    }
+
+    get $Products(): Observable<IProduct[]> {
+        return this.$productsBehavior.asObservable();
+    }
 }

@@ -1,84 +1,138 @@
 <app-panel-top></app-panel-top>
 
 <div class="wrapper_parrent">
-  <div class="wrapper_side_child"></div>
-  <div class="wrapper_main_child">
-    <table id="wrapper_main_child_table">
-      <thead *ngIf="this.mainService.products" id="tableHead">
-        <tr>
-          <th>
-            <p>Miniaturka</p><fa-icon [icon]="['fas','image']"></fa-icon>
-          </th>
-          <th>Opis</th>
-          <th>
-            <p>Akcje</p><fa-icon [icon]="['fas','minus-square']"></fa-icon>
-          </th>
-        </tr>
-      </thead>
-      <tbody id="tableBody">
-        <ng-container *ngFor="let object of this.uniqueCart">
-          <tr>
-            <td>
-              <img src="{{object.product.thumbnail}}" alt="{{object.product.title}}">
-            </td>
-            <td>
-              <ul>
-                <li>Tytuł: {{object.product.title}}</li>
-                <li>Cena: {{object.product.price}}</li>
-                <li>Kategoria: {{object.product.category}}</li>
-              </ul>
-            </td>
-            <td>
-              <button (click)="removeFromCart(object)">
-                <span>Usuń z koszyka: </span>
-                <span class="product_counter">{{getProductCount(object.product)}}</span>
-              </button>
-            </td>
-          </tr>
-        </ng-container>
-      </tbody>
-    </table>
-  </div>
-  <div class="wrapper_side_child"></div>
+    <div class="wrapper_side_child"></div>
+    <div class="wrapper_main_child">
+        <table id="wrapper_main_child_table">
+            <thead *ngIf="(this.$Cart | async)?.length" id="tableHead">
+                <tr>
+                    <th>
+                        <p>Miniaturka</p>
+                        <fa-icon [icon]="['fas', 'image']"></fa-icon>
+                    </th>
+                    <th>Opis</th>
+                    <th>
+                        <p>Akcje</p>
+                        <fa-icon [icon]="['fas', 'minus-square']"></fa-icon>
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <ng-container *ngFor="let cart of (this.$UniqueCart | async)">
+                    <tr>
+                        <td>
+                            <img
+                                src="{{ cart.product.thumbnail }}"
+                                alt="{{ cart.product.title }}"
+                            />
+                        </td>
+                        <td>
+                            <ul>
+                                <li>Tytuł: {{ cart.product.title }}</li>
+                                <li>Cena: {{ cart.product.price }}</li>
+                                <li>Kategoria: {{ cart.product.category }}</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <button (click)="removeFromCart(cart)">
+                                <span>Usuń z koszyka: </span>
+                                <span class="product_counter">{{
+                                    $getProductCount(cart.product) | async
+                                }}</span>
+                            </button>
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+    </div>
+    <div class="wrapper_side_child"></div>
 </div>
 <div class="wrapper">
-  <div class="payment"><p>Płatność</p></div>
-  <div class="wrapper_form">
-    <form action="http://www.jakubadamus.cba.pl/paypal.php" method="get" #paymentForm>
-      <div class="inputItem" style="background-color: rgb(46, 46, 46); color: white">
-        <div class="left-50p">
-            <img src="https://www.paypalobjects.com/webstatic/mktg/logo-center/banner_pl_payments_by_pp_165x56.png" alt="PayPal"/>
-        </div>
-      </div>
-      <div class="inputItem" >
-        <div class="left-50">
-          <input type="text" #firstName name="firstName" id="" placeholder="Imie">
-          <input type="text" #lastName name="lastName" id="" placeholder="Nazwisko">
-        </div>
-        <div class="right-50">
-          <input type="text" #email name="email" id="" placeholder="Email">
-          <input type="text" name="phone" id="" placeholder="Telefon">
-        </div>
-      </div>
-      <div class="inputItem">
-        <ng-container *ngFor="let object of this.mainService.cart">
-          <input type="hidden" name="products[]" value="{{ object | json }}">
-        </ng-container>
-      </div>
-      <div class="checkItem">
-        <div class="left-50p">
-          <p>Do zapłaty: {{getCartPrice()}}<fa-icon [icon]="['fas','cash-register']"></fa-icon></p>
-        </div>
-        <div>
-          <label for="" class="item">
-            <p>Akceptuję regulamin:</p>
-            <input #regulamin type="checkbox" name="aggrement" id="" (change)="0" (click)="changeToCorrect()" style="cursor: pointer;">
-            <button [disabled]="!regulamin.checked" (click)="paymentForm.submit()" id="invalid">Kup</button>
-          </label>
-        </div>
-      </div>
-    </form>
-  </div>
+    <div class="payment"><p>Płatność</p></div>
+    <div class="wrapper_form">
+        <form
+            #paymentForm
+            [formGroup]="form"
+            (ngSubmit)="submit()"
+        >
+            <div
+                class="inputItem"
+                style="background-color: rgb(46, 46, 46); color: white"
+            >
+                <div class="left-50p">
+                    <img
+                        src="https://www.paypalobjects.com/webstatic/mktg/logo-center/banner_pl_payments_by_pp_165x56.png"
+                        alt="PayPal"
+                    />
+                </div>
+            </div>
+            <div class="inputItem">
+                <div class="left-50">
+                    <input
+                        type="text"
+                        #firstName
+                        name="firstName"
+                        id=""
+                        placeholder="Imie"
+                        formControlName="firstName"
+                    />
+                    <input
+                        type="text"
+                        #lastName
+                        name="lastName"
+                        id=""
+                        placeholder="Nazwisko"
+                        formControlName="lastName"
+                    />
+                </div>
+                <div class="right-50">
+                    <input
+                        type="text"
+                        #email
+                        name="email"
+                        id=""
+                        placeholder="Email"
+                        formControlName="email"
+                    />
+                    <input
+                        type="text"
+                        name="phone"
+                        id=""
+                        placeholder="Telefon"
+                        formControlName="phone"
+                    />
+                </div>
+            </div>
+            <div class="checkItem">
+                <div class="left-50p">
+                    <p>
+                        Do zapłaty: {{ $getCartPrice() | async
+                        }}<fa-icon [icon]="['fas', 'cash-register']"></fa-icon>
+                    </p>
+                </div>
+                <div>
+                    <label for="" class="item">
+                        <p>Akceptuję regulamin:</p>
+                        <input
+                            #regulamin
+                            type="checkbox"
+                            name="aggrement"
+                            (change)="(0)"
+                            style="cursor: pointer"
+                        />
+                        <button
+                            [disabled]="!regulamin.checked || form.invalid"
+                            (click)="paymentForm.submit()"
+                            [ngClass]="regulamin.checked && !form.invalid ? 'valid' : 'invalid'"
+                        >
+                            Kup
+                        </button>
+                    </label>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
 
 <app-footer></app-footer>

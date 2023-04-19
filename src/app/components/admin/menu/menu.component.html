@@ -1,19 +1,27 @@
-<button id="scroll_top" (click)="scrollTop()"><fa-icon [icon]="['fas','arrow-up']"></fa-icon></button>
+<button id="scroll_top" (click)="scrollTop()">
+    <fa-icon [icon]="['fas', 'arrow-up']"></fa-icon>
+</button>
 <div id="side_nav">
-  <div id="links" class="m-fadeIn">
-    <a routerLink="/adm_dashboard">Dashboard</a>
-    <a routerLink="/adm_products">Produkty</a>
-    <a routerLink="/adm_orders">Zamówienia</a>
-    <a>Użytkownicy</a>
-    <a>Newsletter</a>
-    <a>Logi</a>
-    <a>Ustawienia</a>
-    <a routerLink="/landing">Powrót do sklepu</a>
-  </div>
-  <div class="show_button">
-    <button id="show" (click)="hide()">
-      <fa-icon [icon]="['fas','arrow-right']" class="m-fadeIn"></fa-icon>
-      <fa-icon [icon]="['fas','arrow-left']" class="m-fadeOut"></fa-icon>
-    </button>
-  </div>
+    <div id="links" [ngClass]="this.hidden ? 'm-fadeIn' : 'm-fadeOut'">
+        <a routerLink="/admin/dashboard">Dashboard</a>
+        <a routerLink="/admin/products">Produkty</a>
+        <a routerLink="/admin/orders">Zamówienia</a>
+        <a>Użytkownicy</a>
+        <a>Newsletter</a>
+        <a>Logi</a>
+        <a>Ustawienia</a>
+        <a routerLink="/landing">Powrót do sklepu</a>
+    </div>
+    <div class="show_button">
+        <button id="show" (click)="hide()">
+            <fa-icon
+                [icon]="['fas', 'arrow-right']"
+                [ngClass]="this.hidden ? 'm-fadeIn' : 'm-fadeOut'"
+            ></fa-icon>
+            <fa-icon
+                [icon]="['fas', 'arrow-left']"
+                [ngClass]="!this.hidden ? 'm-fadeIn' : 'm-fadeOut'"
+            ></fa-icon>
+        </button>
+    </div>
 </div>

@@ -1,47 +1,53 @@
 <a routerLink="/cart" id="button_compound">
-  <div>
-    <p>{{getCartQuantity()}}</p>
-    <fa-icon [icon]="['fas','shopping-bag']"></fa-icon>
-  </div>
+    <div>
+        <p>{{ $getCartQuantity() | async }}</p>
+        <fa-icon [icon]="['fas', 'shopping-bag']"></fa-icon>
+    </div>
 </a>
 <div class="wrapper">
-  <button routerLink="/adm_dashboard" id="admbtn"><fa-icon [icon]="['fas','tools']"></fa-icon></button>
-  <button id="scroll_top" (click)="scrollTop()"><fa-icon [icon]="['fas','arrow-up']"></fa-icon></button>
-  <div class="wrapper_right">
-      <h2 class="item">NoLama</h2>
-      <a routerLink="/landing">
-       <!--img src="https://via.placeholder.com/100" alt=""-->
-       <img src="assets/photos/NoLama.png" alt="logo">
-      </a>
-  </div>
-  <div class="wrapper_panel">
-    <div class="side_panel"></div>
-    <div class="main_panel">
-      <div class="navbar">
-        <ul>
-          <li>
-            <a routerLink="/landing">Home</a>
-          </li>
-          <li>
-            <a routerLink="/products" (click)="this.mainService.getProducts(this.mainService.productsRequest)">Products</a>
-          </li>
-          <li>
-            <a routerLink="/cart">Cart</a>
-          </li>
-        </ul>
-      </div>
-      <div class="searchbar">
-        <div class="panel_left">
-          <input type="text" [(ngModel)]="this.mainService.productsRequest.name">
-        </div>
-        <div class="panel_right">
-          <button (click)="this.mainService.getProducts(this.mainService.productsRequest)" routerLink="/products">
-            <fa-icon [icon]="['fas','search']"></fa-icon>
-            <p>Szukaj</p>
-          </button>
-        </div>
-      </div>
+    <button routerLink="/admin" id="admbtn">
+        <fa-icon [icon]="['fas', 'tools']"></fa-icon>
+    </button>
+    <button id="scroll_top" (click)="scrollTop()">
+        <fa-icon [icon]="['fas', 'arrow-up']"></fa-icon>
+    </button>
+    <div class="wrapper_right">
+        <h2 class="item">NoLama</h2>
+        <a routerLink="/landing">
+            <img src="assets/photos/NoLama.png" alt="logo" />
+        </a>
     </div>
-    <div class="side_panel"></div>
-  </div>
+    <div class="wrapper_panel">
+        <div class="side_panel"></div>
+        <div class="main_panel">
+            <div class="navbar">
+                <ul>
+                    <li>
+                        <a routerLink="/landing">Home</a>
+                    </li>
+                    <li>
+                        <a routerLink="/products">Products</a>
+                    </li>
+                    <li>
+                        <a routerLink="/cart">Cart</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="searchbar">
+                <div class="panel_left">
+                    <input #query type="text" />
+                </div>
+                <div class="panel_right">
+                    <button
+                        routerLink="/products"
+                        (click)="this.sendQuery(query.value)"
+                    >
+                        <fa-icon [icon]="['fas', 'search']"></fa-icon>
+                        <p>Szukaj</p>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="side_panel"></div>
+    </div>
 </div>

@@ -1,68 +1,100 @@
-import { MainService } from 'src/app/services/main.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Observable, Subscription } from 'rxjs';
+import { defaultIfEmpty, map } from 'rxjs/operators';
+import { ICartProduct } from 'src/app/interfaces/ICartProduct';
+import { IProduct } from 'src/app/interfaces/IProduct';
+import { CartService } from 'src/app/services/cart.service';
+import { OrderService } from 'src/app/services/order.service';
 
 @Component({
-  selector: 'app-cart',
-  templateUrl: './cart.component.html',
-  styleUrls: ['./cart.component.scss']
+    selector: 'app-cart',
+    templateUrl: './cart.component.html',
+    styleUrls: ['./cart.component.scss'],
 })
-export class CartComponent implements OnInit {
+export class CartComponent implements OnInit, OnDestroy {
+    private $cart!: Observable<ICartProduct[]>;
+    private subscriptions!: Subscription;
 
-  uniqueCart: any[] = [];
-  map = new Map();
-
-  constructor(public mainService: MainService) {
-    this.uniqueItem();
-  }
-
-  ngOnInit(): void {
-  }
-  getCartPrice(): number{
-    let price = 0;
-    for (const object of this.mainService.cart){
-      price += parseFloat(object.product.price);
-    }
-    return price;
-  }
-  removeFromCart(product: any): void{
-    const index = this.mainService.cart.findIndex((prod: any) => {
-      return prod.product.id === product.product.id;
+    form: FormGroup = this.builder.group({
+        firstName: ['', Validators.required],
+        lastName: ['', Validators.required],
+        email: ['', Validators.required],
+        phone: ['', Validators.required],
     });
-    if (index > -1){
-      this.mainService.cart.splice(index, 1);
-      const checkIndex = this.mainService.cart.findIndex((prod: any) => {
-        return prod.product.id === product.product.id;
-      });
-      if (checkIndex === -1){
-        const uniqueIndex = this.uniqueCart.indexOf(product, 0);
-        this.map.delete(product.product.id);
-        this.uniqueCart.splice(uniqueIndex, 1);
-      }
+
+    constructor(
+        private cartService: CartService,
+        private orderService: OrderService,
+        private builder: FormBuilder
+    ) {
+        this.subscriptions = new Subscription();
     }
-  }
-  uniqueItem(): void{
-    for (const product of this.mainService.cart) {
-      if (!this.map.has(product.product.id)){
-          this.map.set(product.product.id, true);
-          this.uniqueCart.push(product);
-      }
+
+    ngOnInit(): void {
+        this.$cart = this.cartService.$Cart;
     }
-  }
-  getProductCount(product: any): number {
-    let quantity = 0;
-    for (const p of this.mainService.cart) {
-      if (p.product.id === product.id) {
-        quantity += 1;
-      }
+
+    ngOnDestroy(): void {
+        this.subscriptions.unsubscribe();
     }
-    return quantity;
-  }
-  changeToCorrect(): void {
-    const inv = document.getElementById('invalid');
-    const v = document.getElementById('correct');
-    // tslint:disable-next-line: no-non-null-assertion
-    if (inv === null) { v!.id = 'invalid'; }
-    // tslint:disable-next-line: no-non-null-assertion
-    else { inv!.id = 'correct'; }
-  }
+
+    $getCartPrice(): Observable<number> {
+        return this.$cart.pipe(
+            map((cart) =>
+                cart.reduce((price, cart) => price + cart.product.price, 0)
+            ),
+            defaultIfEmpty(0)
+        );
+    }
+
+    removeFromCart(product: ICartProduct): void {
+        this.cartService.removeFromCart(product.id!);
+    }
+
+    $getProductCount(product: IProduct): Observable<number> {
+        return this.$cart.pipe(
+            map((cart) =>
+                cart.reduce(
+                    (count, cart) =>
+                        product.id === cart.product.id ? count + 1 : count,
+                    0
+                )
+            ),
+            defaultIfEmpty(0)
+        );
+    }
+
+    submit() {
+        this.subscriptions.add(
+            this.$cart
+                .pipe(map((x) => x.map((x) => x.product)))
+                .subscribe((products) => {
+                        this.orderService.addOrder({
+                            ...this.form.value,
+                            date: new Date().toISOString(),
+                            products,
+                        });
+                        this.cartService.deleteCart();
+                    }
+                )
+        );
+    }
+
+    get $Cart(): Observable<ICartProduct[]> {
+        return this.$cart;
+    }
+
+    get $UniqueCart(): Observable<ICartProduct[]> {
+        return this.$cart.pipe(
+            map((cart) =>
+                cart
+                    .reduce(
+                        (prev, curr) => ((prev[curr.product.id] = curr), prev),
+                        [] as ICartProduct[]
+                    )
+                    .filter((x) => x)
+            )
+        );
+    }
 }

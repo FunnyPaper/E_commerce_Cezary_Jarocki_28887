@@ -1,89 +1,104 @@
-<div id="update_button">
-  <div id="side_buttons">
-    <button mat-button mat-raised-button color="primary"(click)="this.mainService.getProducts(this.mainService.productsRequest)">Odśwież</button>
-    <button mat-button mat-raised-button color="primary"(click)="hide()" id="hide">Pokaż produkty</button>
-  </div>
-  <div id="main_button">
-    <button mat-button mat-raised-button color="primary"(click)="showUpdateOptions()">Opcje</button>
-  </div>
-</div>
 <div class="wrapper">
-  <app-menu></app-menu>
-  <div class="content-right">
-    <div class="content">
-      <div class="content-header">
-        <h2>ADMIN PRODUCTS</h2>
-      </div>
-      <div class="content-container">
-        <table>
-          <thead>
-            <tr>
-              <th colspan="5">
-                <h2>Dodaj nowy produkt</h2>
-              </th>
-            </tr>
-            <tr>
-              <th>link do obrazka</th>
-              <th>tytuł</th>
-              <th>cena</th>
-              <th colspan="2"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <input type="text" [(ngModel)]="newProduct.thumbnail">
-              </td>
-              <td>
-                <input type="text" [(ngModel)]="newProduct.title">
-              </td>
-              <td>
-                <input type="number" [(ngModel)]="newProduct.price">
-              </td>
-              <td>
-                <select [(ngModel)]="newProduct.category">
-                  <option value="game">game</option>
-                  <option value="tool">tool</option>
-                </select>
-              </td>
-              <td>
-                <button (click)="this.mainService.addProduct(newProduct)" id="add">Dodaj</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="content-container" id="products-table" style="display: none;">
-        <table>
-          <thead *ngIf="this.mainService.products">
-            <tr>
-              <th>obrazek</th>
-              <th>dane</th>
-              <th>akcje</th>
-            </tr>
-          </thead>
-          <tbody>
-            <ng-container *ngFor="let product of this.mainService.products?.productsTable">
-              <tr>
-                <td>
-                  <img src="{{product.thumbnail}}" alt="">
-                </td>
-                <td>
-                  <ul>
-                    <li>Tytuł: {{product.title}}</li>
-                    <li>Cena: {{product.price}}</li>
-                    <li>Kategoria: {{product.category}}</li>
-                  </ul>
-                </td>
-                <td>
-                  <button (click)="this.mainService.removeProduct(product.id)" id="delete">Usuń</button>
-                </td>
-              </tr>
-            </ng-container>
-          </tbody>
-        </table>
-      </div>
+    <app-menu></app-menu>
+    <div class="content-right">
+        <div class="content">
+            <div class="content-header">
+                <h2>ADMIN PRODUCTS</h2>
+            </div>
+            <div class="content-container">
+                <form [formGroup]="form" (ngSubmit)="submit()">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th colspan="5">
+                                    <h2>Dodaj nowy produkt</h2>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th>link do obrazka</th>
+                                <th>tytuł</th>
+                                <th>cena</th>
+                                <th colspan="2"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <input
+                                        formControlName="thumbnail"
+                                        type="text"
+                                    />
+                                </td>
+                                <td>
+                                    <input
+                                        formControlName="title"
+                                        type="text"
+                                    />
+                                </td>
+                                <td>
+                                    <input
+                                        formControlName="price"
+                                        type="number"
+                                    />
+                                </td>
+                                <td>
+                                    <select formControlName="category">
+                                        <option value="game">game</option>
+                                        <option value="tool">tool</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <button type="submit" id="add">
+                                        Dodaj
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+            <div
+                class="content-container"
+                id="products-table"
+            >
+                <table>
+                    <thead *ngIf="(this.$Products | async)">
+                        <tr>
+                            <th>obrazek</th>
+                            <th>dane</th>
+                            <th>akcje</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container
+                            *ngFor="let product of (this.$Products | async)"
+                        >
+                            <tr>
+                                <td>
+                                    <img src="{{ product.thumbnail }}" alt="" />
+                                </td>
+                                <td>
+                                    <ul>
+                                        <li>Tytuł: {{ product.title }}</li>
+                                        <li>Cena: {{ product.price }}zł</li>
+                                        <li>
+                                            Kategoria: {{ product.category }}
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <button
+                                        (click)="this.removeProduct(product.id)"
+                                        id="delete"
+                                    >
+                                        Usuń
+                                    </button>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
-

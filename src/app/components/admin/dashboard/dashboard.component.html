@@ -1,38 +1,92 @@
 <div id="update_button">
-  <div id="side_buttons">
-    <button mat-button mat-raised-button color="primary"(click)="updateYear()">YY</button>
-    <button mat-button mat-raised-button color="primary"(click)="updateYearMonth()">YY/MM</button>
-    <button mat-button mat-raised-button color="primary"(click)="updateYearMonthDay()">YY/MM/DD</button>
-  </div>
-  <div id="main_button">
-    <button mat-button mat-raised-button color="primary"(click)="showUpdateOptions()">Odśwież</button>
-  </div>
+    <div
+        id="side_buttons"
+        [ngStyle]="{ display: this.hidden ? 'none' : 'flex' }"
+    >
+        <button
+            mat-button
+            mat-raised-button
+            color="primary"
+            (click)="updateYear()"
+        >
+            YY
+        </button>
+        <button
+            mat-button
+            mat-raised-button
+            color="primary"
+            (click)="updateYearMonth()"
+        >
+            YY/MM
+        </button>
+        <button
+            mat-button
+            mat-raised-button
+            color="primary"
+            (click)="updateYearMonthDay()"
+        >
+            YY/MM/DD
+        </button>
+    </div>
+    <div id="main_button">
+        <button
+            mat-button
+            mat-raised-button
+            color="primary"
+            (click)="showUpdateOptions()"
+        >
+            Odśwież
+        </button>
+    </div>
 </div>
 <div class="wrapper">
-  <app-menu></app-menu>
-  <div class="content-right">
-    <div class="content">
-      <div class="content-header">
-        <h2>DASHBOARD</h2>
-      </div>
-      <div class="content-draw">
-          <canvas baseChart
-          [datasets]="barChartData"
-          [labels]="barChartLabels"
-          [options]="barChartOptions"
-          [plugins]="barChartPlugins"
-          [legend]="barChartLegend"
-          [chartType]="barChartType">
-          </canvas>
-      </div>
+    <app-menu></app-menu>
+    <div class="content-right">
+        <div class="content">
+            <div class="content-header">
+                <h2>DASHBOARD</h2>
+            </div>
+            <div class="content-draw">
+                <canvas
+                    baseChart
+                    [datasets]="barChartData"
+                    [labels]="barChartLabels"
+                    [options]="barChartOptions"
+                    [plugins]="barChartPlugins"
+                    [legend]="barChartLegend"
+                    [chartType]="barChartType"
+                >
+                </canvas>
+            </div>
+        </div>
+        <div class="content">
+            <div class="content-header">
+                <h2>Lorem ipsum...</h2>
+            </div>
+            <div class="content-container">
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    Etiam dignissim efficitur augue eget consequat. Sed
+                    fermentum lectus lectus, vel luctus quam accumsan in. Nunc
+                    convallis, elit eu porta tincidunt, dolor urna interdum
+                    nibh, nec gravida metus quam nec orci. In venenatis metus
+                    vel lobortis scelerisque. Nulla a odio scelerisque, vehicula
+                    ligula at, rutrum augue. Aliquam sollicitudin elit et arcu
+                    volutpat rutrum. Orci varius natoque penatibus et magnis dis
+                    parturient montes, nascetur ridiculus mus. Mauris a tortor
+                    lobortis leo fringilla sollicitudin. Morbi facilisis, orci
+                    at mattis malesuada, lacus erat eleifend mauris, id egestas
+                    augue massa ac eros. Aliquam ut lectus interdum purus
+                    tincidunt ultricies. Phasellus sodales, dui sed sodales
+                    aliquam, massa quam tincidunt risus, non molestie purus
+                    libero at tellus. Vivamus dignissim, massa at auctor
+                    dignissim, ante orci molestie lorem, vitae posuere neque
+                    erat a dui. In congue aliquet ante, rutrum lobortis ante
+                    consequat ut. Praesent augue mi, volutpat non enim eget,
+                    suscipit varius ipsum. Aenean sagittis at ligula convallis
+                    bibendum.
+                </p>
+            </div>
+        </div>
     </div>
-    <div class="content">
-      <div class="content-header">
-        <h2>Lorem ipsum...</h2>
-      </div>
-      <div class="content-container">
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam dignissim efficitur augue eget consequat. Sed fermentum lectus lectus, vel luctus quam accumsan in. Nunc convallis, elit eu porta tincidunt, dolor urna interdum nibh, nec gravida metus quam nec orci. In venenatis metus vel lobortis scelerisque. Nulla a odio scelerisque, vehicula ligula at, rutrum augue. Aliquam sollicitudin elit et arcu volutpat rutrum. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Mauris a tortor lobortis leo fringilla sollicitudin. Morbi facilisis, orci at mattis malesuada, lacus erat eleifend mauris, id egestas augue massa ac eros. Aliquam ut lectus interdum purus tincidunt ultricies. Phasellus sodales, dui sed sodales aliquam, massa quam tincidunt risus, non molestie purus libero at tellus. Vivamus dignissim, massa at auctor dignissim, ante orci molestie lorem, vitae posuere neque erat a dui. In congue aliquet ante, rutrum lobortis ante consequat ut. Praesent augue mi, volutpat non enim eget, suscipit varius ipsum. Aenean sagittis at ligula convallis bibendum.</p>
-      </div>
-    </div>
-  </div>
 </div>

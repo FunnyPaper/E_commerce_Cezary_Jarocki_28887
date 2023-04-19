@@ -1,47 +1,52 @@
 <app-panel-top></app-panel-top>
 
 <div class="wrapper_parrent">
-  <div class="wrapper_side_child">
-    <!-- <img src="assets/photos/LENNY.gif"/> -->
-  </div>
-  <div class="wrapper_main_child">
-    <table id="wrapper_main_child_table">
-      <thead *ngIf="this.mainService.products" id="tableHead">
-        <tr>
-          <th>
-            <p>Miniaturka</p><fa-icon [icon]="['fas','image']"></fa-icon>
-          </th>
-          <th>Opis</th>
-          <th>
-            <p>Akcje</p><fa-icon [icon]="['fas','plus-square']"></fa-icon>
-          </th>
-        </tr>
-      </thead>
-      <tbody id="tableBody">
-        <ng-container *ngFor="let product of this.mainService.products?.productsTable">
-          <tr>
-            <td>
-              <img src="{{product.thumbnail}}" alt="{{product.title}}">
-            </td>
-            <td>
-              <ul>
-                <li>Tytuł: {{product.title}}</li>
-                <li>Cena: {{product.price}}</li>
-                <li>Kategoria: {{product.category}}</li>
-              </ul>
-            </td>
-            <td>
-              <button (click)="addToCart(product)">
-                <span>Dodaj do koszyka: </span>
-                <span class="product_counter">{{getProductCount(product)}}</span>
-              </button>
-            </td>
-          </tr>
-        </ng-container>
-      </tbody>
-    </table>
-  </div>
-  <div class="wrapper_side_child"></div>
+    <div class="wrapper_side_child"></div>
+    <div class="wrapper_main_child">
+        <table id="wrapper_main_child_table">
+            <thead *ngIf="(this.$Products | async)?.length" id="tableHead">
+                <tr>
+                    <th>
+                        <p>Miniaturka</p>
+                        <fa-icon [icon]="['fas', 'image']"></fa-icon>
+                    </th>
+                    <th>Opis</th>
+                    <th>
+                        <p>Akcje</p>
+                        <fa-icon [icon]="['fas', 'plus-square']"></fa-icon>
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <ng-container *ngFor="let product of (this.$Products | async)">
+                    <tr>
+                        <td>
+                            <img
+                                src="{{ product.thumbnail }}"
+                                alt="{{ product.title }}"
+                            />
+                        </td>
+                        <td>
+                            <ul>
+                                <li>Tytuł: {{ product.title }}</li>
+                                <li>Cena: {{ product.price }}zł</li>
+                                <li>Kategoria: {{ product.category }}</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <button (click)="addToCart(product)">
+                                <span>Dodaj do koszyka: </span>
+                                <span class="product_counter">{{
+                                    $getProductCount(product) | async
+                                }}</span>
+                            </button>
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+    </div>
+    <div class="wrapper_side_child"></div>
 </div>
 
 <app-footer></app-footer>
